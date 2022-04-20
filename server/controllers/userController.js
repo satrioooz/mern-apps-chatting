@@ -53,26 +53,41 @@ module.exports.getAllUsers = async (req, res, next) => {
   }
 };
 
+// CREATE POST setAvatar
 module.exports.setAvatar = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    const avatarImage = req.body.image;
-    const userData = await User.findByIdAndUpdate(
-      userId,
-      {
-        isAvatarImageSet: true,
-        avatarImage,
-      },
-      { new: true }
-    );
-    return res.json({
-      isSet: userData.isAvatarImageSet,
-      image: userData.avatarImage,
-    });
+    const user = await User.findById(req.params.id);
+    if (!user) return res.json({ msg: "User not found", status: false });
+    user.avatarImage = req.body.avatarImage;
+    await user.save();
+    return res.json({ status: true, user });
   } catch (ex) {
     next(ex);
+    
   }
 };
+
+
+// module.exports.setAvatar = async (req, res, next) => {
+//   try {
+//     const userId = req.params.id;
+//     const avatarImage = req.body.image;
+//     const userData = await User.findByIdAndUpdate(
+//       userId,
+//       {
+//         isAvatarImageSet: true,
+//         avatarImage,
+//       },
+//       { new: true }
+//     );
+//     return res.json({
+//       isSet: userData.isAvatarImageSet,
+//       image: userData.avatarImage,
+//     });
+//   } catch (ex) {
+//     next(ex);
+//   }
+// };
 
 module.exports.logOut = (req, res, next) => {
   try {
